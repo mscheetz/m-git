@@ -8,4 +8,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   base: '/m-git/',
+  build: {
+    sourcemap: true,
+  },
 })

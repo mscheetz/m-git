@@ -61,7 +61,8 @@ export function useProfileUsers(usernames, token) {
           { headers: headers(token) }
         )
         if (!res.ok) throw new Error(`Failed to fetch ${username}`)
-        return res.json()
+const data = await res.json()
+      return Array.isArray(data) ? data : []
       },
       ...QC,
     })),
@@ -81,8 +82,10 @@ export function useCommitActivity(repoFullName, pushedAt, token) {
         `https://api.github.com/repos/${repoFullName}/stats/commit_activity`,
         { headers: headers(token) }
       )
+      if (res.status === 202) return []
       if (!res.ok) throw new Error('Failed to fetch commit activity')
-      return res.json()
+      const data = await res.json()
+      return Array.isArray(data) ? data : []
     },
     ...QC,
     enabled: !!repoFullName && recent,
@@ -128,6 +131,7 @@ export function useContributionCalendar(username, token, enabled) {
 }
 
 export function aggregateByMonth(weeklyData) {
+  if (!Array.isArray(weeklyData)) return []
   const months = {}
   for (const week of weeklyData) {
     const date = new Date(week.week * 1000)
