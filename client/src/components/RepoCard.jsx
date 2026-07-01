@@ -1,17 +1,21 @@
 import { getLanguageColor, timeAgo, formatCount } from '../api'
+import CommitSparkline from './CommitSparkline'
 
-export default function RepoCard({ repo }) {
+export default function RepoCard({ repo, showActivity, token }) {
   return (
     <div className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow bg-white">
       <div className="flex items-start justify-between gap-2">
-        <a
-          href={repo.html_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-semibold text-blue-600 hover:text-blue-800 hover:underline truncate"
-        >
-          {repo.name}
-        </a>
+        <div className="min-w-0">
+          <a
+            href={repo.html_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-blue-600 hover:text-blue-800 hover:underline truncate block"
+          >
+            {repo.name}
+          </a>
+          <span className="text-[11px] text-gray-400">{repo._owner}</span>
+        </div>
         <a
           href={repo.html_url}
           target="_blank"
@@ -84,6 +88,10 @@ export default function RepoCard({ repo }) {
           </span>
         )}
       </div>
+
+      {showActivity && (
+        <CommitSparkline repoFullName={repo.full_name} pushedAt={repo.pushed_at} token={token} />
+      )}
     </div>
   )
 }
