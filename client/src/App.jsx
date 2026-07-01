@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useMultiProfileRepos, useProfileUsers } from './api'
+import { PROFILES, useMultiProfileRepos, useProfileUsers } from './api'
 import ProfileCard from './components/ProfileCard'
 import ProfileFilter from './components/ProfileFilter'
 import AddProfile from './components/AddProfile'
