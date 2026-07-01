@@ -137,7 +137,7 @@ function App() {
         )}
 
         <div className="flex gap-6 flex-wrap mb-8">
-          {users.map((u) => (
+          {users.sort((a, b) => a.login.localeCompare(b.login)).map((u) => (
             <ProfileCard key={u.login} user={u} />
           ))}
         </div>
