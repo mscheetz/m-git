@@ -45,3 +45,5 @@ packages/react-devtools-timeline/dist
 packages/react-devtools-cdt-mcp/dist
 
 *.env
+
+client/dist

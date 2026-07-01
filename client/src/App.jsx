@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
-import { PROFILES, useMultiProfileRepos, useProfileUsers } from './api'
+import { useMultiProfileRepos, useProfileUsers } from './api'
 import ProfileCard from './components/ProfileCard'
 import ProfileFilter from './components/ProfileFilter'
+import AddProfile from './components/AddProfile'
 import SearchBar from './components/SearchBar'
 import LanguageFilter from './components/LanguageFilter'
 import ToggleBar from './components/ToggleBar'
@@ -10,9 +11,12 @@ import RepoGrid from './components/RepoGrid'
 import ContributionHeatmap from './components/ContributionHeatmap'
 
 function App() {
+  const [allProfiles, setAllProfiles] = useState(() => {
+    const saved = localStorage.getItem('mGit-all-profiles')
+    return saved ? JSON.parse(saved) : PROFILES
+  })
   const [selectedProfiles, setSelectedProfiles] = useState(() => {
-    const saved = localStorage.getItem('mGit-profiles')
-    return saved ? JSON.parse(saved) : ['Matt-Scheetz', 'mscheetz']
+    return allProfiles.map((p) => p.username)
   })
   const [token, setToken] = useState(() => {
     return localStorage.getItem('mGit-token') || ''
@@ -28,13 +32,32 @@ function App() {
   const { users, isLoading: usersLoading } = useProfileUsers(selectedProfiles, token)
 
   const isRateLimited = error?.message?.toLowerCase().includes('rate limit')
-  
+
+  function saveProfiles(next) {
+    setAllProfiles(next)
+    localStorage.setItem('mGit-all-profiles', JSON.stringify(next))
+  }
+
   function toggleProfile(username) {
-    const next = selectedProfiles.includes(username)
-      ? selectedProfiles.filter((u) => u !== username)
-      : [...selectedProfiles, username]
-    setSelectedProfiles(next)
-    localStorage.setItem('mGit-profiles', JSON.stringify(next))
+    setSelectedProfiles((prev) =>
+      prev.includes(username)
+        ? prev.filter((u) => u !== username)
+        : [...prev, username]
+    )
+  }
+
+  function removeProfile(username) {
+    const nextProfiles = allProfiles.filter((p) => p.username !== username)
+    saveProfiles(nextProfiles)
+    setSelectedProfiles((prev) => prev.filter((u) => u !== username))
+  }
+
+  function addProfile(username) {
+    const exists = allProfiles.some((p) => p.username === username)
+    if (exists) return
+    const next = [...allProfiles, { username, label: username }]
+    saveProfiles(next)
+    setSelectedProfiles((prev) => [...prev, username])
   }
 
   function handleToken(next) {
@@ -52,7 +75,6 @@ function App() {
   }, [repos])
 
   const filtered = useMemo(() => {
-    const profileOrder = PROFILES.findIndex((p) => p.username === 'mscheetz')
     return repos
       .filter((repo) => {
         if (!showForks && repo.fork) return false
@@ -83,11 +105,15 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-start justify-between mb-6">
-          <ProfileFilter
-            profiles={PROFILES}
-            selected={selectedProfiles}
-            onToggle={toggleProfile}
-          />
+          <div className="flex gap-2 flex-wrap items-start">
+            <ProfileFilter
+              profiles={allProfiles}
+              selected={selectedProfiles}
+              onToggle={toggleProfile}
+              onRemove={removeProfile}
+            />
+            <AddProfile token={token} onAdd={addProfile} />
+          </div>
           <TokenInput token={token} onSave={handleToken} />
         </div>
 
@@ -96,7 +122,7 @@ function App() {
             <p className="text-sm text-amber-800 font-medium">API rate limit reached</p>
             <p className="text-xs text-amber-700 mt-1">
               Unauthenticated requests limited to 60/hour. Paste a GitHub token above for 5000/hour. 
-              Create one at{' '}
+              Create at{' '}
               <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer"
                 className="underline hover:text-amber-900">github.com/settings/tokens</a>
               {' '}(no scopes needed).
@@ -111,7 +137,7 @@ function App() {
         )}
 
         <div className="flex gap-6 flex-wrap mb-8">
-          {users.sort(u => u.login).map((u) => (
+          {users.map((u) => (
             <ProfileCard key={u.login} user={u} />
           ))}
         </div>
@@ -163,7 +189,15 @@ function App() {
         </div>
 
         <footer className="mt-12 pt-6 border-t border-gray-200 text-center text-xs text-gray-400">
-          github.com/mscheetz · github.com/Matt-Scheetz
+          {allProfiles.map((p, i) => (
+            <span key={p.username}>
+              {i > 0 && <span> · </span>}
+              <a href={`https://github.com/${p.username}`} target="_blank" rel="noopener noreferrer"
+                className="hover:text-gray-600 transition-colors">
+                github.com/{p.username}
+              </a>
+            </span>
+          ))}
         </footer>
       </div>
     </div>

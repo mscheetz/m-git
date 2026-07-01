@@ -5,6 +5,16 @@ export const PROFILES = [
   { username: 'mscheetz', label: 'mscheetz' },
 ]
 
+export async function validateUser(username, token) {
+  const res = await fetch(
+    `https://api.github.com/users/${encodeURIComponent(username)}`,
+    { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+  )
+  if (res.status === 404) return null
+  if (!res.ok) throw new Error('Validation failed')
+  return res.json()
+}
+
 const QC = {
   staleTime: 1000 * 60 * 60,
   gcTime: 1000 * 60 * 60 * 2,
