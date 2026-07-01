@@ -61,8 +61,7 @@ export function useProfileUsers(usernames, token) {
           { headers: headers(token) }
         )
         if (!res.ok) throw new Error(`Failed to fetch ${username}`)
-const data = await res.json()
-      return Array.isArray(data) ? data : []
+        return res.json()
       },
       ...QC,
     })),

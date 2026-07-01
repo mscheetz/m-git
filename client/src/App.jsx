@@ -26,8 +26,7 @@ function App() {
   const [showForks, setShowForks] = useState(true)
   const [showArchived, setShowArchived] = useState(true)
   const [showActivity, setShowActivity] = useState(true)
-  const [showHeatmap, setShowHeatmap] = useState(true)
-
+  
   const { repos, isLoading: reposLoading, error } = useMultiProfileRepos(selectedProfiles, token)
   const { users, isLoading: usersLoading } = useProfileUsers(selectedProfiles, token)
 
@@ -142,11 +141,10 @@ function App() {
           ))}
         </div>
 
-        {showHeatmap && (
-          <div className="mb-8">
-            <ContributionHeatmap usernames={selectedProfiles} token={token} />
-          </div>
-        )}
+        
+        <div className="mb-8">
+          <ContributionHeatmap usernames={selectedProfiles} token={token} />
+        </div>        
 
         <div className="space-y-4">
           <SearchBar value={search} onChange={setSearch} />
@@ -172,11 +170,6 @@ function App() {
               label="Commit activity"
               checked={showActivity}
               onChange={setShowActivity}
-            />
-            <ToggleBar
-              label="Heatmap"
-              checked={showHeatmap}
-              onChange={setShowHeatmap}
             />
           </div>
         </div>
