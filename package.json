@@ -1,0 +1,9 @@
+{
+  "name": "migit-root",
+  "private": true,
+  "scripts": {
+    "dev": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "deploy": "cd client && npm run deploy"
+  }
+}
