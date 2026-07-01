@@ -1,4 +1,6 @@
 export default function ProfileCard({ user }) {
+  if (!user || !user.login) return null
+
   return (
     <div className="flex items-center gap-4">
       <img

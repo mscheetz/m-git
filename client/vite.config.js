@@ -9,6 +9,6 @@ export default defineConfig({
   ],
   base: '/m-git/',
   build: {
-    sourcemap: true,
+    sourcemap: false,
   },
 })

@@ -19,7 +19,7 @@ function App() {
     return allProfiles.map((p) => p.username)
   })
   const [token, setToken] = useState(() => {
-    return localStorage.getItem('mGit-token') || ''
+    return import.meta.env.VITE_GITHUB_TOKEN || localStorage.getItem('mGit-token') || ''
   })
   const [search, setSearch] = useState('')
   const [language, setLanguage] = useState(null)
