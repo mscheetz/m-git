@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { PROFILES, useMultiProfileRepos, useProfileUsers } from './api'
 import ProfileCard from './components/ProfileCard'
 import ProfileFilter from './components/ProfileFilter'
@@ -26,7 +26,15 @@ function App() {
   const [showForks, setShowForks] = useState(true)
   const [showArchived, setShowArchived] = useState(true)
   const [showActivity, setShowActivity] = useState(true)
-  
+  const [tokenValid, setTokenValid] = useState(false)
+
+  useEffect(() => {
+    if (!token) { setTokenValid(false); return }
+    fetch('https://api.github.com/user', { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => setTokenValid(res.ok))
+      .catch(() => setTokenValid(false))
+  }, [token])
+
   const { repos, isLoading: reposLoading, error } = useMultiProfileRepos(selectedProfiles, token)
   const { users, isLoading: usersLoading } = useProfileUsers(selectedProfiles, token)
 
@@ -113,7 +121,7 @@ function App() {
             />
             <AddProfile token={token} onAdd={addProfile} />
           </div>
-          <TokenInput token={token} onSave={handleToken} />
+          <TokenInput token={token} tokenValid={tokenValid} onSave={handleToken} />
         </div>
 
         {isRateLimited && !token && (
