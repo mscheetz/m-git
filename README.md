@@ -2,6 +2,8 @@
 
 GitHub repo showcase — view repos across multiple profiles with contribution heatmaps and commit activity sparklines.
 
+**[Deployed site →](https://mscheetz.github.io/m-git/)**
+
 ## Features
 
 - **Multi-profile** — add any GitHub username, toggle profiles on/off
