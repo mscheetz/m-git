@@ -15,6 +15,20 @@ export default function RepoCard({ repo, showActivity, token }) {
             {repo.name}
           </a>
           <span className="text-[11px] text-gray-400">{repo._owner}</span>
+          {repo.has_pages && (
+            <a
+              href={`https://${repo._owner}.github.io/${repo.name}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex ml-1.5 text-gray-400 hover:text-blue-600 transition-colors"
+              title="GitHub Pages"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="12" cy="12" r="10" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+              </svg>
+            </a>
+          )}
         </div>
         <a
           href={repo.html_url}
